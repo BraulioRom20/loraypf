@@ -7,25 +7,18 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define PIN_SPI_MOSI 21
-#define PIN_SPI_CLK  28
+
+//only pins of the lora module.
 #define PIN_SPI_CS   32
 #define PIN_SPI_DC   34
 #define PIN_SPI_RST  35
-#define PIN_SPI_MISO 33
+//#define PIN_SPI_MISO 33
 
 static const char *TAG = "LoRaTest";
 
 spi_device_handle_t lora_spi;
 
 void lora_spi_init() {
-    spi_bus_config_t buscfg = {
-        .mosi_io_num = PIN_SPI_MOSI,
-        .miso_io_num = PIN_SPI_MISO,
-        .sclk_io_num = PIN_SPI_CLK,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1
-    };
 
     spi_device_interface_config_t devcfg = {
         .clock_speed_hz = 26*1000*1000,
@@ -34,8 +27,8 @@ void lora_spi_init() {
         .queue_size = 7,
     };
 
-    ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO));
-    ESP_ERROR_CHECK(spi_bus_add_device(SPI2_HOST, &devcfg, &lora_spi));
+    //ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO));
+    ESP_ERROR_CHECK(spi_bus_add_device(HSPI_HOST, &devcfg, &lora_spi));
 }
 
 uint8_t lora_read_register(uint8_t reg) {
